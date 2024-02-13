@@ -59,8 +59,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 
 # Command to play music
-@bot.command(name="play", help="Plays music from a Spotify URL")
+@bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
 async def play(ctx, url: str):
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if not voice_client:
+        await ctx.send("Not connected to voice channel, use /join")
+        return
+
     search_term = None
     if "open.spotify.com" in url:
         track_id = url.split("/")[-1].split("?")[0]
@@ -69,8 +74,6 @@ async def play(ctx, url: str):
         search_term = track_name + " audio"
     elif "youtube.com" in url:
         search_term = url
-
-    print(search_term)
 
     # Search and play the song on YouTube
     async with ctx.typing():
