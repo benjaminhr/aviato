@@ -18,3 +18,7 @@ SPOTIFY_CLIENT_ID="your id here"
 To get the bot to join a server you need the following URL:
 
 - `https://discord.com/oauth2/authorize?client_id=1206957246743973979&permissions=36700160&scope=bot`
+
+### Experiments
+
+- Issue with music videos being the first result for queries. Trying out adding `audio` string to youtube-dl search query when using spotify URLs e.g. "50 Cent Candy Shop Audio".

@@ -64,13 +64,14 @@ class YTDLSource(discord.PCMVolumeTransformer):
 async def play(ctx, url: str):
     search_term = None
     if "open.spotify.com" in url:
-        # await ctx.send("Please provide a valid Spotify URL.")
         track_id = url.split("/")[-1].split("?")[0]
         track_info = sp.track(track_id)
         track_name = track_info["name"] + " " + track_info["artists"][0]["name"]
-        search_term = track_name
+        search_term = track_name + " audio"
     elif "youtube.com" in url:
         search_term = url
+
+    print(search_term)
 
     # Search and play the song on YouTube
     async with ctx.typing():
