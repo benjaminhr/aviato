@@ -1,7 +1,6 @@
 import os
 import discord
 
-# import youtube_dl
 import yt_dlp as youtube_dl
 import spotipy
 from discord.ext import commands
