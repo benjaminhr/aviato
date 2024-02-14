@@ -18,6 +18,4 @@ def healthz():
     return "up"
 
 
-threading.Thread(
-    target=app.run, kwargs={"use_reloader": False, "port": port, "host": "0.0.0.0"}
-).start()
+app.run(use_reloader=False, port=port, host="0.0.0.0")
