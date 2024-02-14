@@ -136,8 +136,8 @@ async def queue(ctx):
 async def next(ctx):
     if ctx.voice_client and ctx.voice_client.is_playing():
         ctx.voice_client.stop()
-        await ctx.send("🟡 Queue is empty")
     if len(track_queue) == 0:
+        await ctx.send("🟡 Queue is empty")
         return
     await play(ctx, "")
 
