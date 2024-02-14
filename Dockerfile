@@ -8,4 +8,4 @@ RUN apt-get -y upgrade
 RUN apt-get install -y ffmpeg
 
 RUN pip install --no-cache-dir -r requirements.txt
-CMD ["python", "./server.py"]
+CMD ["python", "./src/server.py"]
