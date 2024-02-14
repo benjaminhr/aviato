@@ -14,8 +14,8 @@ SPOTIFY_CLIENT_SECRET="your secret here"
 SPOTIFY_CLIENT_ID="your id here"
 ```
 
-- `docker build -t aviato .`
-- `docker run aviato`
+- `docker build -t benjaminhr/aviato .`
+- `docker run benjaminhr/aviato`
 
 To get the bot to join a server you need the following URL:
 

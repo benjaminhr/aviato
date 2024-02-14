@@ -1,4 +1,5 @@
 import os
+import sys
 import discord
 import asyncio
 import yt_dlp as youtube_dl
@@ -12,6 +13,17 @@ load_dotenv()
 discord_token = os.getenv("DISCORD_TOKEN")
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+
+# Check for missing environment variables
+if discord_token is None:
+    print("Error: DISCORD_TOKEN is not set.")
+    sys.exit(1)
+if spotify_client_id is None:
+    print("Error: SPOTIFY_CLIENT_ID is not set.")
+    sys.exit(1)
+if spotify_client_secret is None:
+    print("Error: SPOTIFY_CLIENT_SECRET is not set.")
+    sys.exit(1)
 
 # Setup Spotify API
 sp = spotipy.Spotify(

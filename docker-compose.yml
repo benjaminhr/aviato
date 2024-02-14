@@ -1,0 +1,6 @@
+version: '3'
+services:
+  my_service:
+    image: benjaminhr/aviato
+    env_file:
+      - .env
