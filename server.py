@@ -135,8 +135,8 @@ async def queue(ctx):
     await ctx.send(f"Current queue is: \n{output_str}")
 
 
-@bot.command(name="clearqueue", help="Clear the current track queue")
-async def clearqueue(ctx):
+@bot.command(name="clear", help="Clear the current track queue")
+async def clear(ctx):
     global track_queue
     track_queue = []
     await ctx.send("🟡 Queue emptied")
