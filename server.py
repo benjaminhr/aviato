@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 import yt_dlp as youtube_dl
 import spotipy
 from discord.ext import commands
@@ -41,6 +42,9 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 ffmpeg_options = {"options": "-vn"}
 
+# Track queue to play
+track_queue = []
+
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -68,9 +72,14 @@ async def play(ctx, url: str):
         await ctx.send("🔴 Not connected to voice channel, use /join")
         return
 
-    # Stop the current stream
-    if ctx.voice_client and ctx.voice_client.is_playing():
-        ctx.voice_client.stop()
+    if voice_client.is_playing():
+        await ctx.send("🟡 Added to queue")
+        track_queue.append(url)
+        return
+
+    if len(url) == 0 or url is None:
+        # Play next song in queue
+        url = track_queue.pop(0)
 
     # Either collect track name from spotify and search it on youtube
     # or use youtube link directly
@@ -83,14 +92,41 @@ async def play(ctx, url: str):
     elif "youtube.com" in url:
         search_term = url
 
+    # Once video has finished, this gets called to play next track
+    def play_next_track(error):
+        if error:
+            print(f"Player error: {error}")
+        if len(track_queue) > 0:
+            coroutine = play(ctx, "")
+            asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
+
     # Search and play the song on YouTube
     async with ctx.typing():
         player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
-        ctx.voice_client.play(
-            player, after=lambda e: print("Player error: %s" % e) if e else None
-        )
+        ctx.voice_client.play(player, after=play_next_track)
 
     await ctx.send(f"🟢 Now playing: {player.title}")
+
+
+@bot.command(name="queue", help="Print the current queue")
+async def queue(ctx):
+    if len(track_queue) == 0:
+        await ctx.send("🟡 Empty queue")
+
+    output_str = ""
+    for index, track in enumerate(track_queue):
+        output_str += f"({index + 1}) {track}\n"
+    await ctx.send(f"Current queue is: \n{output_str}")
+
+
+@bot.command(name="next", help="Play next track in the queue")
+async def next(ctx):
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+        await ctx.send("🟡 Queue is empty")
+    if len(track_queue) == 0:
+        return
+    await play(ctx, "")
 
 
 @bot.command(name="stop", help="Stops current track from playing")
@@ -107,9 +143,9 @@ async def join(ctx):
         return
 
     channel = ctx.author.voice.channel
-
     if ctx.voice_client is None or ctx.voice_client.channel != channel:
         await channel.connect()
+        await ctx.send("🟢 Joined voice channel")
 
 
 @bot.command(name="leave", help="Clears the queue and leaves the voice channel")
@@ -121,7 +157,7 @@ async def leave(ctx):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("🔴 There was an error executing the command.")
+        await ctx.send("🔴 There was an error executing the command. See server logs.")
         print(error)
 
 
