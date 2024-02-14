@@ -8,4 +8,6 @@ RUN apt-get -y upgrade
 RUN apt-get install -y ffmpeg
 
 RUN pip install --no-cache-dir -r requirements.txt
-CMD ["python", "./src/server.py"]
+
+RUN chmod +x ./entrypoint.sh
+CMD ["./entrypoint.sh"]
