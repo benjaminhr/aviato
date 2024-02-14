@@ -52,7 +52,10 @@ ytdl_format_options = {
 }
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
-ffmpeg_options = {"options": "-vn"}
+ffmpeg_options = {
+    "options": '-vn -filter:a "volume=0.25"',
+    "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
+}
 
 # Track queue to play
 track_queue = []
@@ -177,7 +180,7 @@ async def leave(ctx):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("🔴 There was an error executing the command. See server logs.")
+        await ctx.send("🔴 There was an error. See server logs.")
         print(error)
 
 
