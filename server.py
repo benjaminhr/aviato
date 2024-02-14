@@ -175,6 +175,7 @@ async def join(ctx):
 async def leave(ctx):
     await ctx.send("🟡 Leaving voice channel")
     await ctx.voice_client.disconnect()
+    sys.exit(1)
 
 
 @bot.event
