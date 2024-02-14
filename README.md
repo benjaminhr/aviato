@@ -21,9 +21,6 @@ SPOTIFY_CLIENT_ID="your id here"
 - To get the bot to join a server you need the [this URL](https://discord.com/oauth2/authorize?client_id=1206957246743973979&permissions=36700160&scope=bot). Replace `client_id` with your own discord bot's.
 - If the bot has been added to the server via the URL, then `/help` will print all available commands.
 
-### Dev Notes
-- Whenever there is a push to the repo, github action triggers docker build and push to ghcr. Render then picks up latest image and runs it.
-
 ### Experiments
 
 - Issue with music videos being the first result for queries. Trying out adding `audio` string to youtube-dl search query when using spotify URLs e.g. "50 Cent Candy Shop Audio".

@@ -132,6 +132,13 @@ async def queue(ctx):
     await ctx.send(f"Current queue is: \n{output_str}")
 
 
+@bot.command(name="clearqueue", help="Clear the current track queue")
+async def clearqueue(ctx):
+    global track_queue
+    track_queue = []
+    await ctx.send("🟡 Queue emptied")
+
+
 @bot.command(name="next", help="Play next track in the queue")
 async def next(ctx):
     if ctx.voice_client and ctx.voice_client.is_playing():
