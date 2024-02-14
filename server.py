@@ -124,6 +124,7 @@ async def play(ctx, url: str):
 async def queue(ctx):
     if len(track_queue) == 0:
         await ctx.send("🟡 Empty queue")
+        return
 
     output_str = ""
     for index, track in enumerate(track_queue):
