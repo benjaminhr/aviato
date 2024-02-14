@@ -18,6 +18,7 @@ SPOTIFY_CLIENT_ID="your id here"
 
 ### Bot instructions
 
+- To start the bot after some time of inactivity, just visit this [link](https://bot.benjaminhr.com/) and wait (30seconds)
 - To get the bot to join a server you need the [this URL](https://discord.com/oauth2/authorize?client_id=1206957246743973979&permissions=36700160&scope=bot). Replace `client_id` with your own discord bot's.
 - If the bot has been added to the server via the URL, then `/help` will print all available commands.
 
