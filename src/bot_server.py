@@ -82,7 +82,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 def get_spotify_track_name(url: str) -> str:
     track_id = url.split("/")[-1].split("?")[0]
     track_info = sp.track(track_id)
-    track_name = track_info["name"] + " " + track_info["artists"][0]["name"]
+    track_name = track_info["artists"][0]["name"] + " " + track_info["name"]
     return track_name
 
 
