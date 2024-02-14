@@ -152,13 +152,6 @@ async def next(ctx):
     await play(ctx, "")
 
 
-@bot.command(name="stop", help="Stops current track from playing")
-async def stop(ctx):
-    if ctx.voice_client and ctx.voice_client.is_playing():
-        ctx.voice_client.stop()
-        await ctx.send("🟡 Stopping track")
-
-
 @bot.command(name="join", help="Joins a voice channel")
 async def join(ctx):
     if not ctx.message.author.voice:
