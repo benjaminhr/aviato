@@ -20,9 +20,7 @@ To get the bot to join a server you need the [this URL](https://discord.com/oaut
 
 ### Bot instructions
 
-- `/join` whilst you are in the voice channel of a server, to let the bot join the voice channel as well
-- `/play <spotify-url | youtube-url>`
-- `/leave`
+- If the bot has been added to the server via the URL, then `/help` will print all available commands.
 
 ### Experiments
 
