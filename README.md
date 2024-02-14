@@ -1,3 +1,5 @@
+<img src='cover_photo.png' width='512'>
+
 # aviato
 
 ### Discord bot for playing spotify urls via youtube 🤘
