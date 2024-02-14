@@ -4,5 +4,6 @@ services:
     # image: benjaminhr/aviato
     build:
       dockerfile: ./Dockerfile
+    image: ghcr.io/benjaminhr/aviato:latest
     env_file:
       - .env
