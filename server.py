@@ -1,26 +1,29 @@
 import os
 import discord
-
 import yt_dlp as youtube_dl
 import spotipy
 from discord.ext import commands
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 discord_token = os.getenv("DISCORD_TOKEN")
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
+# Setup Spotify API
 sp = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(
         client_id=spotify_client_id, client_secret=spotify_client_secret
     )
 )
 
+# Setup Discord Bot
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="/", intents=intents)
 
+# youtube-dl video stream options
 ytdl_format_options = {
     "format": "bestaudio/best",
     "outtmpl": "%(extractor)s-%(id)s-%(title)s.%(ext)s",
@@ -34,10 +37,9 @@ ytdl_format_options = {
     "default_search": "auto",
     "source_address": "0.0.0.0",
 }
+ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 ffmpeg_options = {"options": "-vn"}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
@@ -66,6 +68,8 @@ async def play(ctx, url: str):
         await ctx.send("Not connected to voice channel, use /join")
         return
 
+    # Either collect track name from spotify and search it on youtube
+    # or use youtube link directly
     search_term = None
     if "open.spotify.com" in url:
         track_id = url.split("/")[-1].split("?")[0]
