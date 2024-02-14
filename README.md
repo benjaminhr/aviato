@@ -1,4 +1,4 @@
-<img src='cover_photo.png' width='512'>
+![cover photo](cover_photo.png)
 
 # aviato
 
