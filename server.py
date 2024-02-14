@@ -79,6 +79,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
+def get_spotify_track_name(url: str) -> str:
+    track_id = url.split("/")[-1].split("?")[0]
+    track_info = sp.track(track_id)
+    track_name = track_info["name"] + " " + track_info["artists"][0]["name"]
+    return track_name
+
+
 # Command to play music
 @bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
 async def play(ctx, url: str):
@@ -100,9 +107,7 @@ async def play(ctx, url: str):
     # or use youtube link directly
     search_term = None
     if "open.spotify.com" in url:
-        track_id = url.split("/")[-1].split("?")[0]
-        track_info = sp.track(track_id)
-        track_name = track_info["name"] + " " + track_info["artists"][0]["name"]
+        track_name = get_spotify_track_name(url)
         search_term = track_name + " audio"
     elif "youtube.com" in url:
         search_term = url
@@ -131,6 +136,8 @@ async def queue(ctx):
 
     output_str = ""
     for index, track in enumerate(track_queue):
+        if "open.spotify.com" in track:
+            track = get_spotify_track_name(track)
         output_str += f"({index + 1}) {track}\n"
     await ctx.send(f"Current queue is: \n{output_str}")
 
