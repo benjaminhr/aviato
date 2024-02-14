@@ -1,9 +1,7 @@
 version: '3'
 services:
   aviato-bot:
-    # image: benjaminhr/aviato
-    build:
-      dockerfile: ./Dockerfile
+    build: .
     image: ghcr.io/benjaminhr/aviato:latest
     env_file:
       - .env
