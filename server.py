@@ -65,8 +65,12 @@ class YTDLSource(discord.PCMVolumeTransformer):
 async def play(ctx, url: str):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if not voice_client:
-        await ctx.send("Not connected to voice channel, use /join")
+        await ctx.send("🔴 Not connected to voice channel, use /join")
         return
+
+    # Stop the current stream
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
 
     # Either collect track name from spotify and search it on youtube
     # or use youtube link directly
@@ -86,13 +90,20 @@ async def play(ctx, url: str):
             player, after=lambda e: print("Player error: %s" % e) if e else None
         )
 
-    await ctx.send(f"Now playing: {player.title}")
+    await ctx.send(f"🟢 Now playing: {player.title}")
+
+
+@bot.command(name="stop", help="Stops current track from playing")
+async def stop(ctx):
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+        await ctx.send("🟡 Stopping track")
 
 
 @bot.command(name="join", help="Joins a voice channel")
 async def join(ctx):
     if not ctx.message.author.voice:
-        await ctx.send("You are not connected to a voice channel.")
+        await ctx.send("🔴 You are not connected to a voice channel.")
         return
 
     channel = ctx.author.voice.channel
@@ -103,13 +114,14 @@ async def join(ctx):
 
 @bot.command(name="leave", help="Clears the queue and leaves the voice channel")
 async def leave(ctx):
+    await ctx.send("🟡 Leaving voice channel")
     await ctx.voice_client.disconnect()
 
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
-        await ctx.send("There was an error executing the command.")
+        await ctx.send("🔴 There was an error executing the command.")
         print(error)
 
 
