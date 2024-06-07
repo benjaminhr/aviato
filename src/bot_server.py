@@ -116,6 +116,7 @@ async def play(ctx, url: str):
     def play_next_track(error):
         if error:
             print(f"Player error: {error}")
+            return
         if len(track_queue) > 0:
             coroutine = play(ctx, "")
             asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
