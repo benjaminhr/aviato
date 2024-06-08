@@ -92,6 +92,17 @@ def get_spotify_album_tracks(url: str):
     return track_urls
 
 
+def get_spotify_playlist_tracks(url: str):
+    playlist_id = url.split("/")[-1].split("?")[0]
+    results = sp.playlist_tracks(playlist_id)
+    track_urls = [
+        "https://open.spotify.com/track/" + item["track"]["id"]
+        for item in results["items"]
+        if item["track"]
+    ]
+    return track_urls
+
+
 # Track queue to play, spotify urls
 track_queue = []
 
@@ -129,6 +140,12 @@ async def play(ctx, url: str):
         track_name = get_spotify_track_name(first_track_url)
         search_term = track_name + " audio"
         track_queue.extend(track_urls)  # Queue the rest of the album
+    elif "open.spotify.com/playlist/" in url:
+        track_urls = get_spotify_playlist_tracks(url)
+        first_track_url = track_urls.pop(0)
+        track_name = get_spotify_track_name(first_track_url)
+        search_term = track_name + " audio"
+        track_queue.extend(track_urls)
     elif "youtube.com" in url:
         search_term = url
 
