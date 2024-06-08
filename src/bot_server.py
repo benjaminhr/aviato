@@ -2,6 +2,7 @@ import os
 import sys
 import discord
 import asyncio
+import traceback
 import yt_dlp as youtube_dl
 import spotipy
 from discord.ext import commands
@@ -86,6 +87,14 @@ def get_spotify_track_name(url: str) -> str:
     return track_name
 
 
+def get_spotify_album_tracks(url: str):
+    tracks = sp.album_tracks(url)
+    track_urls = [
+        "https://open.spotify.com/track/" + track["id"] for track in tracks["items"]
+    ]
+    return track_urls
+
+
 # Command to play music
 @bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
 async def play(ctx, url: str):
@@ -95,38 +104,48 @@ async def play(ctx, url: str):
         return
 
     if voice_client.is_playing():
-        await ctx.send("🟡 Added to queue")
-        track_queue.append(url)
+        if url:
+            track_queue.append(url)
+            await ctx.send("🟡 Added to queue")
         return
 
-    if len(url) == 0 or url is None:
-        # Play next song in queue
+    # If URL is empty, try to get next song from queue
+    if not url:
+        if not track_queue:
+            await ctx.send("🔴 The queue is empty.")
+            return
         url = track_queue.pop(0)
 
     # Either collect track name from spotify and search it on youtube
     # or use youtube link directly
     search_term = None
-    if "open.spotify.com" in url:
+    if "open.spotify.com/track/" in url:
         track_name = get_spotify_track_name(url)
         search_term = track_name + " audio"
+    elif "open.spotify.com/album/" in url:
+        track_urls = get_spotify_album_tracks(url)
+        first_track_url = track_urls.pop(0)
+        track_name = get_spotify_track_name(first_track_url)
+        search_term = track_name + " audio"
+        track_queue.extend(track_urls)  # Queue the rest of the album
     elif "youtube.com" in url:
         search_term = url
 
-    # Once video has finished, this gets called to play next track
-    def play_next_track(error):
-        if error:
-            print(f"Player error: {error}")
-            return
-        if len(track_queue) > 0:
-            coroutine = play(ctx, "")
-            asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
-
-    # Search and play the song on YouTube
     async with ctx.typing():
         player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
-        ctx.voice_client.play(player, after=play_next_track)
+        await ctx.send(f"🟢 Now playing: {player.title}")
 
-    await ctx.send(f"🟢 Now playing: {player.title}")
+        def after_playing(error):
+            if error:
+                print(f"Player error: {error}")
+            else:
+                fut = asyncio.run_coroutine_threadsafe(play(ctx), bot.loop)
+                try:
+                    fut.result()
+                except Exception as e:
+                    print(f"Error in playing next track: {e}")
+
+        ctx.voice_client.play(player, after=after_playing)
 
 
 @bot.command(name="queue", help="Print the current queue")
@@ -137,7 +156,7 @@ async def queue(ctx):
 
     output_str = ""
     for index, track in enumerate(track_queue):
-        if "open.spotify.com" in track:
+        if "open.spotify.com/track/" in track:
             track = get_spotify_track_name(track)
         output_str += f"({index + 1}) {track}\n"
     await ctx.send(f"Current queue is: \n{output_str}")
@@ -182,7 +201,7 @@ async def leave(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("🔴 There was an error. See server logs.")
-        print(error)
+        traceback.print_exception(type(error), error, error.__traceback__)
 
 
 bot.run(discord_token)
