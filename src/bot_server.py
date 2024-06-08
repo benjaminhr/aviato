@@ -58,9 +58,6 @@ ffmpeg_options = {
     "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
 }
 
-# Track queue to play
-track_queue = []
-
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -93,6 +90,10 @@ def get_spotify_album_tracks(url: str):
         "https://open.spotify.com/track/" + track["id"] for track in tracks["items"]
     ]
     return track_urls
+
+
+# Track queue to play, spotify urls
+track_queue = []
 
 
 # Command to play music
@@ -131,21 +132,20 @@ async def play(ctx, url: str):
     elif "youtube.com" in url:
         search_term = url
 
-    async with ctx.typing():
-        player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
+    # Once video has finished, this gets called to play next track
+    def play_next_track(error):
+        if error:
+            print(f"Player error: {error}")
+        if len(track_queue) > 0 and not ctx.voice_client.is_playing():
+            coroutine = play(ctx, "")
+            asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
+
+    if not voice_client.is_playing():
+        # Search and play the song on YouTube
+        async with ctx.typing():
+            player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
+            ctx.voice_client.play(player, after=play_next_track)
         await ctx.send(f"🟢 Now playing: {player.title}")
-
-        def after_playing(error):
-            if error:
-                print(f"Player error: {error}")
-            else:
-                fut = asyncio.run_coroutine_threadsafe(play(ctx), bot.loop)
-                try:
-                    fut.result()
-                except Exception as e:
-                    print(f"Error in playing next track: {e}")
-
-        ctx.voice_client.play(player, after=after_playing)
 
 
 @bot.command(name="queue", help="Print the current queue")
@@ -193,6 +193,8 @@ async def join(ctx):
 
 @bot.command(name="leave", help="Clears the queue and leaves the voice channel")
 async def leave(ctx):
+    global track_queue
+    track_queue = []
     await ctx.send("🟡 Leaving voice channel")
     await ctx.voice_client.disconnect()
 
@@ -202,6 +204,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandInvokeError):
         await ctx.send("🔴 There was an error. See server logs.")
         traceback.print_exception(type(error), error, error.__traceback__)
+    print(error)
 
 
 bot.run(discord_token)
