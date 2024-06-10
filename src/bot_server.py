@@ -8,6 +8,7 @@ import spotipy
 from discord.ext import commands
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
 
 # Load environment variables
 load_dotenv()
@@ -16,7 +17,6 @@ discord_token = (
     if os.getenv("MODE") == "DEV"
     else os.getenv("DISCORD_TOKEN")
 )
-print(discord_token)
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
@@ -111,6 +111,40 @@ def get_spotify_playlist_tracks(url: str):
 # Track queue to play, spotify urls
 track_queue = []
 
+last_interaction_time = datetime.now(timezone.utc)
+leave_after_minutes = 30
+
+
+# Tracks bot activity, if inactive then leaves channel
+async def check_inactivity():
+    while True:
+        await asyncio.sleep(60)  # Check every minute
+        if not bot.voice_clients:
+            continue
+        current_time = datetime.now(timezone.utc)
+        for voice_client in bot.voice_clients:
+            if voice_client.is_connected():
+                if (current_time - last_interaction_time) > timedelta(
+                    minutes=leave_after_minutes
+                ):
+                    if (
+                        not voice_client.channel.members
+                        or len(voice_client.channel.members) == 1
+                    ):  # Only bot itself
+                        await voice_client.disconnect()
+                        track_queue.clear()
+
+
+@bot.event
+async def on_command(_):
+    global last_interaction_time
+    last_interaction_time = datetime.now(timezone.utc)
+
+
+@bot.event
+async def on_ready():
+    bot.loop.create_task(check_inactivity())
+
 
 # Command to play music
 @bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
@@ -189,8 +223,7 @@ async def queue(ctx):
 
 @bot.command(name="clear", help="Clear the current track queue")
 async def clear(ctx):
-    global track_queue
-    track_queue = []
+    track_queue.clear()
     await ctx.send("🟡 Queue emptied")
 
 
@@ -219,8 +252,7 @@ async def join(ctx):
 
 @bot.command(name="leave", help="Clears the queue and leaves the voice channel")
 async def leave(ctx):
-    global track_queue
-    track_queue = []
+    track_queue.clear()
     await ctx.send("🟡 Leaving voice channel")
     await ctx.voice_client.disconnect()
 
