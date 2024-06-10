@@ -11,13 +11,18 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-discord_token = os.getenv("DISCORD_TOKEN")
+discord_token = (
+    os.getenv("DISCORD_TOKEN_DEV")
+    if os.getenv("MODE") == "DEV"
+    else os.getenv("DISCORD_TOKEN")
+)
+print(discord_token)
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
 spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 # Check for missing environment variables
 if discord_token is None:
-    print("Error: DISCORD_TOKEN is not set.")
+    print("Error: DISCORD_TOKEN or DISCORD_TOKEN_DEV is not set.")
     sys.exit(1)
 if spotify_client_id is None:
     print("Error: SPOTIFY_CLIENT_ID is not set.")
@@ -111,8 +116,10 @@ track_queue = []
 @bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
 async def play(ctx, url: str):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+
     if not voice_client:
-        await ctx.send("🔴 Not connected to voice channel, use /join")
+        await join(ctx)
+        await play(ctx, url)
         return
 
     if voice_client.is_playing():
