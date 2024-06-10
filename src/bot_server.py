@@ -118,8 +118,9 @@ async def play(ctx, url: str):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
     if not voice_client:
-        await join(ctx)
-        await play(ctx, url)
+        connected = await join(ctx)
+        if connected:
+            await play(ctx, url)
         return
 
     if voice_client.is_playing():
@@ -213,6 +214,7 @@ async def join(ctx):
     if ctx.voice_client is None or ctx.voice_client.channel != channel:
         await channel.connect()
         await ctx.send("🟢 Joined voice channel")
+        return True
 
 
 @bot.command(name="leave", help="Clears the queue and leaves the voice channel")
