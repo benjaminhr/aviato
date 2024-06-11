@@ -202,6 +202,7 @@ async def play(ctx, url: str):
     if not voice_client.is_playing():
         # Search and play the song on YouTube
         async with ctx.typing():
+            ctx.voice_client.stop()
             player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
             ctx.voice_client.play(player, after=play_next_track)
         await ctx.send(f"🟢 Now playing: {player.title}")
