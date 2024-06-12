@@ -41,7 +41,7 @@ services:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 120
+    command: --interval 120 aviato-bot-aviato-bot-1
 
 volumes:
   prometheus_data:
