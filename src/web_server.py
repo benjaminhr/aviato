@@ -1,16 +1,16 @@
 import os
-import threading
+import socket
 
 from flask import Flask
-from flask import send_from_directory
+from flask import render_template
 
 app = Flask(__name__, static_folder="static")
-port = int(os.environ.get("PORT", 8080))
 
 
 @app.route("/")
 def send_file():
-    return send_from_directory(app.static_folder, "index.html")
+    hostname = socket.gethostname()
+    return render_template("index.html", hostname=hostname)
 
 
 @app.route("/healthz")
@@ -18,4 +18,4 @@ def healthz():
     return "up"
 
 
-app.run(use_reloader=False, port=port, host="0.0.0.0")
+app.run(use_reloader=False, port=int(os.environ.get("PORT", 8080)), host="0.0.0.0")
