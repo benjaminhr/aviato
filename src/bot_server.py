@@ -238,6 +238,16 @@ async def next(ctx):
     await play(ctx, "")
 
 
+@bot.command(name="skip", help="Skip current track")
+async def skip(ctx):
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+    if len(track_queue) == 0:
+        await ctx.send("🟡 Queue is empty")
+        return
+    await play(ctx, "")
+
+
 @bot.command(name="join", help="Joins a voice channel")
 async def join(ctx):
     if not ctx.message.author.voice:
