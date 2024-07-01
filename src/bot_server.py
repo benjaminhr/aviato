@@ -215,12 +215,19 @@ async def queue(ctx):
         await ctx.send("🟡 Empty queue")
         return
 
-    output_str = ""
-    for index, track in enumerate(track_queue):
-        if "open.spotify.com/track/" in track:
-            track = get_spotify_track_name(track)
-        output_str += f"({index + 1}) {track}\n"
-    await ctx.send(f"Current queue is: \n{output_str}")
+    async with ctx.typing():
+        output_str = ""
+        for index, track in enumerate(track_queue):
+            if "open.spotify.com/track/" in track:
+                track = get_spotify_track_name(track)
+            output_str += f"({index + 1}) {track}\n"
+
+        # 2000 char message limit, if queue is long then split into chunks
+        chunks = [output_str[i : i + 1900] for i in range(0, len(output_str), 1900)]
+
+        await ctx.send(f"Current queue is: \n")
+        for chunk in chunks:
+            await ctx.send(chunk)
 
 
 @bot.command(name="shuffle", help="Shuffles song queue")
