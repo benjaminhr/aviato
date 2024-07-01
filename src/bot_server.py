@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 import discord
 import asyncio
@@ -220,6 +221,16 @@ async def queue(ctx):
             track = get_spotify_track_name(track)
         output_str += f"({index + 1}) {track}\n"
     await ctx.send(f"Current queue is: \n{output_str}")
+
+
+@bot.command(name="shuffle", help="Shuffles song queue")
+async def shuffle(ctx):
+    global track_queue
+    if len(track_queue) == 0:
+        await ctx.send("🟡 Queue is empty")
+        return
+    random.shuffle(track_queue)
+    await ctx.send("🟢 Shuffled queue")
 
 
 @bot.command(name="clear", help="Clear the current track queue")
