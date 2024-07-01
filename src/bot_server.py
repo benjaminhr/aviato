@@ -259,6 +259,15 @@ async def skip(ctx):
     await play(ctx, "")
 
 
+@bot.command(name="stop", help="Stops playing audio")
+async def stop(ctx):
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+        await ctx.send("🔴 Audio stopped")
+    else:
+        await ctx.send("🟡 No audio is currently playing")
+
+
 @bot.command(name="join", help="Joins a voice channel")
 async def join(ctx):
     if not ctx.message.author.voice:
