@@ -196,7 +196,7 @@ async def play(ctx, url: str):
     def play_next_track(error):
         if error:
             print(f"Player error: {error}")
-        if len(track_queue) > 0 and not ctx.voice_client.is_playing():
+        if len(track_queue) > 0:
             coroutine = play(ctx, "")
             asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
 
@@ -248,7 +248,7 @@ async def clear(ctx):
 
 @bot.command(name="next", help="Play next track in the queue")
 async def next(ctx):
-    if ctx.voice_client and ctx.voice_client.is_playing():
+    while ctx.voice_client.is_playing():
         ctx.voice_client.stop()
     if len(track_queue) == 0:
         await ctx.send("🟡 Queue is empty")
@@ -258,7 +258,7 @@ async def next(ctx):
 
 @bot.command(name="skip", help="Skip current track")
 async def skip(ctx):
-    if ctx.voice_client and ctx.voice_client.is_playing():
+    while ctx.voice_client.is_playing():
         ctx.voice_client.stop()
     if len(track_queue) == 0:
         await ctx.send("🟡 Queue is empty")
