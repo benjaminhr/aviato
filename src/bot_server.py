@@ -303,4 +303,18 @@ async def on_command_error(ctx, error):
     print(error)
 
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandInvokeError):
+        if (
+            isinstance(error.original, discord.errors.ClientException)
+            and str(error.original) == "Already playing audio."
+        ):
+            return
+        await ctx.send("🔴 There was an error. See server logs.")
+        traceback.print_exception(type(error), error, error.__traceback__)
+    else:
+        print(error)
+
+
 bot.run(discord_token)
