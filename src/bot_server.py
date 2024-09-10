@@ -116,7 +116,7 @@ last_interaction_time = datetime.now(timezone.utc)
 leave_after_minutes = 30
 
 
-# Tracks bot activity, if inactive then leaves channel
+# checks if channel is empty, then leaves
 async def check_inactivity():
     while True:
         await asyncio.sleep(60)  # Check every minute
