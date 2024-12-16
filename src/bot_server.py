@@ -189,6 +189,10 @@ async def play(ctx, url: str):
         track_name = get_spotify_track_name(first_track_url)
         search_term = track_name + " audio"
         track_queue.extend(track_urls)
+    elif "youtu.be" in url:
+        # fixes shortened links e.g. https://youtu.be/TZeK5-_YNxY
+        video_id = url.split('/')[-1]
+        search_term = "https://www.youtube.com/watch?v=" + video_id
     elif "youtube.com" in url:
         search_term = url
 
@@ -217,7 +221,7 @@ async def playnext(ctx, url: str):
     
     track_queue.insert(0, url)
     await ctx.send("🟢 Added to front of queue")
-    
+
 
 @bot.command(name="queue", help="Print the current queue")
 async def queue(ctx):
