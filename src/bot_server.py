@@ -209,6 +209,16 @@ async def play(ctx, url: str):
         await ctx.send(f"🟢 Now playing: {player.title}")
 
 
+
+@bot.command(name="playnext", help="Add track to next in queue")
+async def playnext(ctx, url: str):
+    if not url:
+        return
+    
+    track_queue.insert(0, url)
+    await ctx.send("🟢 Added to front of queue")
+    
+
 @bot.command(name="queue", help="Print the current queue")
 async def queue(ctx):
     if len(track_queue) == 0:
