@@ -191,9 +191,11 @@ async def play(ctx, url: str):
         track_queue.extend(track_urls)
     elif "youtu.be" in url:
         # fixes shortened links e.g. https://youtu.be/TZeK5-_YNxY
-        video_id = url.split('/')[-1]
+        video_id = url.split("/")[-1]
         search_term = "https://www.youtube.com/watch?v=" + video_id
     elif "youtube.com" in url:
+        search_term = url
+    elif "soundcloud.com" in url:
         search_term = url
 
     # Once video has finished, this gets called to play next track
@@ -213,12 +215,11 @@ async def play(ctx, url: str):
         await ctx.send(f"🟢 Now playing: {player.title}")
 
 
-
 @bot.command(name="playnext", help="Add track to next in queue")
 async def playnext(ctx, url: str):
     if not url:
         return
-    
+
     track_queue.insert(0, url)
     await ctx.send("🟢 Added to front of queue")
 
