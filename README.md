@@ -25,6 +25,10 @@ SPOTIFY_CLIENT_ID="your id here"
 
 - `docker compose up --force-recreate --pull always -d`
 
+### Development notes
+
+- In `.env` set `MODE=dev` with `DISCORD_TOKEN_DEV` to use dev channel
+
 ### Experiments
 
 - Issue with music videos being the first result for queries. Trying out adding `audio` string to youtube-dl search query when using spotify URLs e.g. "50 Cent Candy Shop Audio".

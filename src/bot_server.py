@@ -197,6 +197,9 @@ async def play(ctx, url: str):
         search_term = url
     elif "soundcloud.com" in url:
         search_term = url
+    else:
+        await ctx.send("🔴 Invalid URL")
+        return
 
     # Once video has finished, this gets called to play next track
     def play_next_track(error):
