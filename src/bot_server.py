@@ -171,8 +171,6 @@ async def play(ctx, url: str):
             return
         url = track_queue.pop(0)
 
-    # Either collect track name from spotify and search it on youtube
-    # or use youtube link directly
     search_term = None
     if "open.spotify.com/track/" in url:
         track_name = get_spotify_track_name(url)
