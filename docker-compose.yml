@@ -6,9 +6,6 @@ services:
     image: ghcr.io/benjaminhr/aviato:latest
     env_file:
       - .env
-    depends_on:
-      - vpn
-    network_mode: "service:vpn"
 
   prometheus:
     image: prom/prometheus:v2.52.0
