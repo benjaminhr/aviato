@@ -1,21 +1,6 @@
 name: aviato-bot
 
 services:
-  vpn:
-    image: qmcgaw/gluetun
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun
-    environment:
-      - VPN_SERVICE_PROVIDER=mullvad
-      - VPN_TYPE=openvpn
-      - OPENVPN_USER=${MULLVAD_USER}
-      - SERVER_COUNTRIES=SWEDEN
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-
   aviato-bot:
     build: .
     image: ghcr.io/benjaminhr/aviato:latest
