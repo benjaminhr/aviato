@@ -32,8 +32,8 @@ trap _shutdown TERM INT
 
 echo "> Starting web server"
 (
-  exec python src/web_server.py 
+  exec python web_server.py 
 ) >/tmp/web_server.log 2>&1 &
 
 echo "> Starting bot server"
-python src/bot_server.py
+python bot_server.py

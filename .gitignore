@@ -2,3 +2,5 @@
 .cache
 env
 .DS_Store
+Pipfile
+Pipfile.lock

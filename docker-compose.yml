@@ -2,7 +2,7 @@ name: aviato-bot
 
 services:
   aviato-bot:
-    build: .
+    build: ./app
     image: ghcr.io/benjaminhr/aviato:latest
     env_file:
       - .env
