@@ -3,16 +3,16 @@ import traceback
 import discord
 from discord.ext import commands
 from datetime import datetime, timedelta, timezone
-from .queue_manager import track_queue
+from .queue_manager import queue_manager
 from .commands import bot
 
 last_interaction_time = datetime.now(timezone.utc)
-leave_after_minutes = 30
+leave_after_minutes = 2
 
 # checks if channel is empty, then leaves
 async def check_inactivity():
     while True:
-        await asyncio.sleep(60)  # Check every minute
+        await asyncio.sleep(60)
         if not bot.voice_clients:
             continue
         current_time = datetime.now(timezone.utc)
@@ -26,7 +26,7 @@ async def check_inactivity():
                         or len(voice_client.channel.members) == 1
                     ):  # Only bot itself
                         await voice_client.disconnect()
-                        track_queue.clear()
+                        queue_manager.clear_queue()
 
 
 @bot.event
