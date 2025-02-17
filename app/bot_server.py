@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 load_dotenv()
 discord_token = (
     os.getenv("DISCORD_TOKEN_DEV")
-    if os.getenv("MODE") == "DEV"
+    if os.getenv("MODE") == "dev"
     else os.getenv("DISCORD_TOKEN")
 )
 spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID")
@@ -51,7 +51,7 @@ ytdl_format_options = {
     "noplaylist": True,
     "nocheckcertificate": True,
     "ignoreerrors": False,
-    "verbose": True,
+    "verbose": False,
     "logtostderr": False,
     "quiet": True,
     "no_warnings": True,
