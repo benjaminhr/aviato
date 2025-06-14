@@ -16,6 +16,16 @@ services:
       GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}
     env_file:
       - .env
+    restart: "on-failure"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs https://github.com || exit 1"]
+      interval: 24h
+      timeout: 10s
+      retries: 3
 
   prometheus:
     image: prom/prometheus:v2.52.0
