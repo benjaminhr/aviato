@@ -13,7 +13,6 @@ services:
     build: ./ytdlp-update-job
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN}
-      GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}
     env_file:
       - .env
     restart: "on-failure"
