@@ -8,6 +8,7 @@ from .queue_manager import *
 
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
+
 @bot.command(name="play", help="Plays music from a Spotify or Youtube URL")
 async def play(ctx, url: str):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -42,7 +43,7 @@ async def play(ctx, url: str):
         search_term = track_name + " audio"
         # Queue the rest of the album
         for track_url in track_urls:
-            queue_manager.add_to_queue(track_url) 
+            queue_manager.add_to_queue(track_url)
     elif "open.spotify.com/playlist/" in url:
         track_urls = get_spotify_playlist_tracks(url)
         first_track_url = track_urls.pop(0)
@@ -60,6 +61,11 @@ async def play(ctx, url: str):
         search_term = url
     else:
         await ctx.send("🔴 Invalid URL")
+        return
+
+    if search_term is None:
+        ctx.send(f"⚠️ Search term is `None` - could not find track")
+        play_next_track()
         return
 
     # Once video has finished, this gets called to play next track
