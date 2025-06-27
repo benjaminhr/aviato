@@ -29,4 +29,4 @@ urllib3==2.2.0
 websockets==12.0
 Werkzeug==3.0.1
 yarl==1.9.4
-yt-dlp>=2025.6.25
+yt-dlp>=2025.6.26.233029.dev0
