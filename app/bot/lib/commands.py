@@ -64,7 +64,7 @@ async def play(ctx, url: str):
         return
 
     if search_term is None:
-        ctx.send(f"⚠️ Search term is `None` - could not find track")
+        ctx.send(f"🟡 Search term is `None` - could not find track")
         play_next_track()
         return
 
@@ -77,12 +77,16 @@ async def play(ctx, url: str):
             asyncio.run_coroutine_threadsafe(coroutine, bot.loop)
 
     if not voice_client.is_playing():
-        # Search and play the song on YouTube
         async with ctx.typing():
-            ctx.voice_client.stop()
-            player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
-            ctx.voice_client.play(player, after=play_next_track)
-        await ctx.send(f"🟢 Now playing: {player.title}")
+            try:
+                ctx.voice_client.stop()
+                player = await YTDLSource.from_url(search_term, loop=bot.loop, stream=True)
+                ctx.voice_client.play(player, after=play_next_track)
+                await ctx.send(f"🟢 Now playing: {player.title}")
+            except IndexError:
+                await ctx.send("🟡 Could not find song")
+            except Exception as e:
+                await ctx.send(f"🔴 An error occurred while trying to play the song: {str(e)}")
 
 
 @bot.command(name="playnext", help="Add track to next in queue")
