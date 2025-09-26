@@ -14,6 +14,11 @@ ytdl_format_options = {
     "no_warnings": False,
     "default_search": "auto",
     "source_address": "0.0.0.0",
+    "extractor_args": {
+        "youtube": {
+            "player_client": ["default", "-tv_simply"],
+        },
+    },
 }
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
