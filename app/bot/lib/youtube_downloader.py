@@ -8,10 +8,10 @@ ytdl_format_options = {
     "noplaylist": True,
     "nocheckcertificate": True,
     "ignoreerrors": False,
-    "verbose": False,
+    "verbose": True,
     "logtostderr": False,
     "quiet": True,
-    "no_warnings": True,
+    "no_warnings": False,
     "default_search": "auto",
     "source_address": "0.0.0.0",
 }
@@ -21,6 +21,7 @@ ffmpeg_options = {
     "options": '-vn -filter:a "volume=0.25"',
     "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
 }
+
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
