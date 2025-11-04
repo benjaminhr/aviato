@@ -31,4 +31,4 @@ urllib3==2.5.0
 websockets==15.0.1
 Werkzeug==3.1.3
 yarl==1.20.1
-yt-dlp>=2025.11.1.232827.dev0
+yt-dlp>=2025.11.3.233024.dev0
